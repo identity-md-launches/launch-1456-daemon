@@ -1,0 +1,233 @@
+[
+  {
+    "type": "function",
+    "name": "HOOK_FLAGS",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint160",
+        "internalType": "uint160"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "IS_SCRIPT",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "deploy",
+    "inputs": [
+      {
+        "name": "cfg",
+        "type": "tuple",
+        "internalType": "struct Deploy.Config",
+        "components": [
+          {
+            "name": "poolManager",
+            "type": "address",
+            "internalType": "contract IPoolManager"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "factory",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "create2Deployer",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "d",
+        "type": "tuple",
+        "internalType": "struct Deploy.Deployed",
+        "components": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract DaemonToken"
+          },
+          {
+            "name": "hook",
+            "type": "address",
+            "internalType": "contract DaemonHook"
+          },
+          {
+            "name": "treasury",
+            "type": "address",
+            "internalType": "contract NFTTreasury"
+          },
+          {
+            "name": "gameRewards",
+            "type": "address",
+            "internalType": "contract GameRewards"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "contract DistributionReceiver"
+          },
+          {
+            "name": "hookSalt",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "mineSalt",
+    "inputs": [
+      {
+        "name": "deployer",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "creationCode",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "flags",
+        "type": "uint160",
+        "internalType": "uint160"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "predicted",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "salt",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "run",
+    "inputs": [
+      {
+        "name": "cfg",
+        "type": "tuple",
+        "internalType": "struct Deploy.Config",
+        "components": [
+          {
+            "name": "poolManager",
+            "type": "address",
+            "internalType": "contract IPoolManager"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "factory",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "create2Deployer",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "d",
+        "type": "tuple",
+        "internalType": "struct Deploy.Deployed",
+        "components": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract DaemonToken"
+          },
+          {
+            "name": "hook",
+            "type": "address",
+            "internalType": "contract DaemonHook"
+          },
+          {
+            "name": "treasury",
+            "type": "address",
+            "internalType": "contract NFTTreasury"
+          },
+          {
+            "name": "gameRewards",
+            "type": "address",
+            "internalType": "contract GameRewards"
+          },
+          {
+            "name": "receiver",
+            "type": "address",
+            "internalType": "contract DistributionReceiver"
+          },
+          {
+            "name": "hookSalt",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "error",
+    "name": "HookDeployFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NoSaltFound",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ZeroAddress",
+    "inputs": []
+  }
+]
