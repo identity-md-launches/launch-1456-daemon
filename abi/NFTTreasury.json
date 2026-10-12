@@ -16,6 +16,10 @@
     "stateMutability": "nonpayable"
   },
   {
+    "type": "receive",
+    "stateMutability": "payable"
+  },
+  {
     "type": "function",
     "name": "acceptOwnership",
     "inputs": [],
@@ -62,6 +66,55 @@
   },
   {
     "type": "function",
+    "name": "assets",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "allowed",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "perPurchase",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "perDay",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "lifetimeCap",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "dayStart",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "spentToday",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "totalSpent",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "buyNFT",
     "inputs": [
       {
@@ -80,7 +133,17 @@
         "internalType": "uint256"
       },
       {
+        "name": "asset",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
         "name": "price",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "deadline",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -103,13 +166,49 @@
   },
   {
     "type": "function",
-    "name": "maxPricePerPurchase",
+    "name": "deliverPrize",
+    "inputs": [
+      {
+        "name": "collection",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "recipient",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "disablePayment",
+    "inputs": [
+      {
+        "name": "asset",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "gameRewards",
     "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -182,6 +281,19 @@
   },
   {
     "type": "function",
+    "name": "paused",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "pendingOwner",
     "inputs": [],
     "outputs": [
@@ -189,6 +301,32 @@
         "name": "",
         "type": "address",
         "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "policySealed",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "poolManager",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IPoolManager"
       }
     ],
     "stateMutability": "view"
@@ -208,33 +346,43 @@
   },
   {
     "type": "function",
-    "name": "remainingInWindow",
-    "inputs": [],
-    "outputs": [
+    "name": "sealPolicy",
+    "inputs": [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "game",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "manager",
+        "type": "address",
+        "internalType": "contract IPoolManager"
       }
     ],
-    "stateMutability": "view"
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "setCaps",
+    "name": "setAssetPolicy",
     "inputs": [
       {
-        "name": "maxPricePerPurchase_",
+        "name": "asset",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "perPurchase",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "windowCap_",
+        "name": "perDay",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "windowLength_",
+        "name": "lifetimeCap",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -298,123 +446,25 @@
   },
   {
     "type": "function",
-    "name": "spentInWindow",
-    "inputs": [],
-    "outputs": [
+    "name": "setPaused",
+    "inputs": [
       {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "value",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "totalSpent",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
     "name": "transferOwnership",
     "inputs": [
       {
-        "name": "newOwner",
+        "name": "next",
         "type": "address",
         "internalType": "address"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "windowCap",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "windowLength",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "windowStart",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "withdrawNFT",
-    "inputs": [
-      {
-        "name": "collection",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "withdrawTokens",
-    "inputs": [
-      {
-        "name": "token",
-        "type": "address",
-        "internalType": "contract ERC20"
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "outputs": [],
@@ -422,22 +472,28 @@
   },
   {
     "type": "event",
-    "name": "CapsSet",
+    "name": "AssetPolicySet",
     "inputs": [
       {
-        "name": "maxPricePerPurchase",
+        "name": "asset",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "perPurchase",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
       },
       {
-        "name": "windowCap",
+        "name": "perDay",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
       },
       {
-        "name": "windowLength",
+        "name": "lifetimeCap",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -479,31 +535,6 @@
         "type": "bool",
         "indexed": false,
         "internalType": "bool"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "NFTWithdrawn",
-    "inputs": [
-      {
-        "name": "collection",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
       }
     ],
     "anonymous": false
@@ -567,6 +598,76 @@
   },
   {
     "type": "event",
+    "name": "Paused",
+    "inputs": [
+      {
+        "name": "paused",
+        "type": "bool",
+        "indexed": false,
+        "internalType": "bool"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PaymentDisabled",
+    "inputs": [
+      {
+        "name": "asset",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PolicyFinalized",
+    "inputs": [
+      {
+        "name": "gameRewards",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "poolManager",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PrizeDelivered",
+    "inputs": [
+      {
+        "name": "collection",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "recipient",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "Purchased",
     "inputs": [
       {
@@ -588,7 +689,13 @@
         "internalType": "uint256"
       },
       {
-        "name": "price",
+        "name": "asset",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "charged",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -597,29 +704,14 @@
     "anonymous": false
   },
   {
-    "type": "event",
-    "name": "TokensWithdrawn",
-    "inputs": [
-      {
-        "name": "token",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
-    ],
-    "anonymous": false
+    "type": "error",
+    "name": "AlreadyOwned",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "CapExceeded",
+    "inputs": []
   },
   {
     "type": "error",
@@ -634,7 +726,17 @@
   },
   {
     "type": "error",
-    "name": "InvalidWindow",
+    "name": "ExcludedNFT",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "Expired",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidCaps",
     "inputs": []
   },
   {
@@ -647,6 +749,16 @@
         "internalType": "address"
       }
     ]
+  },
+  {
+    "type": "error",
+    "name": "NotConfigured",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotGameRewards",
+    "inputs": []
   },
   {
     "type": "error",
@@ -682,34 +794,17 @@
   {
     "type": "error",
     "name": "Overspent",
-    "inputs": [
-      {
-        "name": "charged",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "price",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ]
+    "inputs": []
   },
   {
     "type": "error",
-    "name": "PriceAboveCap",
-    "inputs": [
-      {
-        "name": "price",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "cap",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ]
+    "name": "PaymentNotAllowed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "PolicySealed",
+    "inputs": []
   },
   {
     "type": "error",
@@ -718,19 +813,8 @@
   },
   {
     "type": "error",
-    "name": "WindowCapExceeded",
-    "inputs": [
-      {
-        "name": "requested",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "remaining",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ]
+    "name": "SwapInProgress",
+    "inputs": []
   },
   {
     "type": "error",

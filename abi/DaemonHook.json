@@ -1271,18 +1271,22 @@
   },
   {
     "type": "error",
-    "name": "HookAddressMismatch",
-    "inputs": [
-      {
-        "name": "hook",
-        "type": "address",
-        "internalType": "address"
-      }
-    ]
+    "name": "AmountTooLarge",
+    "inputs": []
   },
   {
     "type": "error",
     "name": "HookNotImplemented",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidTreasury",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NativePairRequired",
     "inputs": []
   },
   {
@@ -1312,6 +1316,11 @@
   },
   {
     "type": "error",
+    "name": "PartialFillUnsupported",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "PoolAlreadyInitialized",
     "inputs": []
   },
@@ -1322,7 +1331,17 @@
   },
   {
     "type": "error",
+    "name": "TreasuryAlreadyConfigured",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "TreasuryNotConfigured",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "WrongPool",
     "inputs": []
   },
   {

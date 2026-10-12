@@ -1,0 +1,734 @@
+Compiling 2 files with Solc 0.8.26
+Solc 0.8.26 finished in 2.15s
+Compiler run successful!
+warning[missing-events-access-control]: `owner` is changed without an event but is used for access control
+    ╭▸ src/DaemonHook.sol:142:9
+    │
+142 │         owner = msg.sender;
+    │         ━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[missing-events-access-control]: `pendingOwner` is changed without an event but is used for access control
+    ╭▸ src/DaemonHook.sol:143:9
+    │
+143 │         pendingOwner = address(0);
+    │         ━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[unused-return]: return value of an external call is not used
+    ╭▸ src/DaemonHook.sol:167:9
+    │
+167 │         poolManager.unlock(abi.encode(amount));
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/unused-return
+
+warning[reentrancy-events]: event emitted after an external call; reentrancy can reorder or fabricate logs that off-chain consumers rely on
+    ╭▸ src/DaemonHook.sol:177:9
+    │
+177 │         emit FeesForwarded(treasury, amount);
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-events
+
+warning[divide-before-multiply]: division before multiplication may lose precision
+    ╭▸ src/DaemonHook.sol:213:25
+    │
+213 │         if (magnitude > uint256(uint128(type(int128).max)) / 101 * 100) revert AmountTooLarge();
+    │                         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/divide-before-multiply
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:212:42
+    │
+212 │         uint256 magnitude = exactInput ? uint256(-params.amountSpecified) : uint256(params.amountSpecified);
+    │                                          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:212:77
+    │
+212 │         uint256 magnitude = exactInput ? uint256(-params.amountSpecified) : uint256(params.amountSpecified);
+    │                                                                             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:213:25
+    │
+213 │         if (magnitude > uint256(uint128(type(int128).max)) / 101 * 100) revert AmountTooLarge();
+    │                         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:213:33
+    │
+213 │         if (magnitude > uint256(uint128(type(int128).max)) / 101 * 100) revert AmountTooLarge();
+    │                                 ━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint128' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:219:63
+    │
+219 │         return (IHooks.beforeSwap.selector, toBeforeSwapDelta(int128(uint128(fee)), 0), 0);
+    │                                                               ━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'int128' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:219:70
+    │
+219 │         return (IHooks.beforeSwap.selector, toBeforeSwapDelta(int128(uint128(fee)), 0), 0);
+    │                                                                      ━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint128' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:234:46
+    │
+234 │             uint256 requested = exactInput ? uint256(-params.amountSpecified) : uint256(params.amountSpecified);
+    │                                              ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:234:81
+    │
+234 │             uint256 requested = exactInput ? uint256(-params.amountSpecified) : uint256(params.amountSpecified);
+    │                                                                                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:237:45
+    │
+237 │             int256 expected = exactInput ? -int256(requested - feeBefore) : int256(requested + feeBefore);
+    │                                             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'int256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:237:77
+    │
+237 │             int256 expected = exactInput ? -int256(requested - feeBefore) : int256(requested + feeBefore);
+    │                                                                             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'int256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:246:37
+    │
+246 │             unspecifiedAmount < 0 ? uint256(-int256(unspecifiedAmount)) : uint256(uint128(unspecifiedAmount));
+    │                                     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:246:75
+    │
+246 │             unspecifiedAmount < 0 ? uint256(-int256(unspecifiedAmount)) : uint256(uint128(unspecifiedAmount));
+    │                                                                           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint256' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:246:83
+    │
+246 │             unspecifiedAmount < 0 ? uint256(-int256(unspecifiedAmount)) : uint256(uint128(unspecifiedAmount));
+    │                                                                                   ━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint128' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:251:44
+    │
+251 │         return (IHooks.afterSwap.selector, int128(uint128(fee)));
+    │                                            ━━━━━━━━━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'int128' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[unsafe-typecast]: typecast can truncate values
+    ╭▸ src/DaemonHook.sol:251:51
+    │
+251 │         return (IHooks.afterSwap.selector, int128(uint128(fee)));
+    │                                                   ━━━━━━━━━━━━
+    │
+    ├ note: consider disabling this lint if you're certain the cast is safe
+    │       
+    │       // casting to 'uint128' is safe because [explain why]
+    │       // forge-lint: disable-next-line(unsafe-typecast)
+    │       
+    │       
+    ╰ help: https://getfoundry.sh/forge/linting/unsafe-typecast
+
+warning[reentrancy-events]: event emitted after an external call; reentrancy can reorder or fabricate logs that off-chain consumers rely on
+    ╭▸ src/DaemonHook.sol:259:9
+    │
+259 │         emit FeeCharged(key.toId(), zeroForOne, exactInput, fee);
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-events
+
+warning[missing-events-arithmetic]: `queueHead` is changed without an event but is used in arithmetic
+    ╭▸ src/GameRewards.sol:332:30
+    │
+332 │             champion = queue[queueHead++];
+    │                              ━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-events-arithmetic
+
+warning[missing-events-access-control]: `owner` is changed without an event but is used for access control
+    ╭▸ src/GameRewards.sol:176:9
+    │
+176 │         owner = msg.sender;
+    │         ━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[missing-events-access-control]: `pendingOwner` is changed without an event but is used for access control
+    ╭▸ src/GameRewards.sol:177:9
+    │
+177 │         pendingOwner = address(0);
+    │         ━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[missing-events-access-control]: `rewardAuthorizer` is changed without an event but is used for access control
+    ╭▸ src/GameRewards.sol:200:9
+    │
+200 │         rewardAuthorizer = authorizer;
+    │         ━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/GameRewards.sol:215:13
+    │
+215 │         if (start <= block.timestamp) revert SeasonInPast();
+    │             ━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[unused-return]: return value of an external call is not used
+    ╭▸ src/GameRewards.sol:251:53
+    │
+251 │         (PoolKey memory key,,, address requester) = feeFactory.positionOf(feeLaunchNumber);
+    │                                                     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/unused-return
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/GameRewards.sol:261:36
+    │
+261 │         return seasonStart != 0 && block.timestamp >= seasonStart && block.timestamp < seasonStart + SEASON_LENGTH;
+    │                                    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/GameRewards.sol:261:70
+    │
+261 │         return seasonStart != 0 && block.timestamp >= seasonStart && block.timestamp < seasonStart + SEASON_LENGTH;
+    │                                                                      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[uninitialized-local]: local variable is read before being initialized
+    ╭▸ src/GameRewards.sol:378:13
+    │
+378 │             eth += a.ethAmount;
+    │             ━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/uninitialized-local
+
+warning[uninitialized-local]: local variable is read before being initialized
+    ╭▸ src/GameRewards.sol:373:19
+    │
+373 │                 ++nfts;
+    │                   ━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/uninitialized-local
+
+warning[uninitialized-local]: local variable is read before being initialized
+    ╭▸ src/GameRewards.sol:377:13
+    │
+377 │             tokens += a.tokenAmount;
+    │             ━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/uninitialized-local
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/GameRewards.sol:349:13
+    │
+349 │         if (block.timestamp < seasonStart + SEASON_LENGTH || block.timestamp > claimDeadline) {
+    │             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/GameRewards.sol:349:62
+    │
+349 │         if (block.timestamp < seasonStart + SEASON_LENGTH || block.timestamp > claimDeadline) {
+    │                                                              ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[calls-loop]: external call inside a loop
+    ╭▸ src/GameRewards.sol:372:21
+    │
+372 │                 if (IERC721Minimal(a.collection).ownerOf(a.prizeTokenId) != custodian) revert InvalidAllocation();
+    │                     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/calls-loop
+
+warning[require-revert-in-loop]: `require` or `revert` inside a loop
+    ╭▸ src/GameRewards.sol:361:42
+    │
+361 │             if (a.nftId == EXCLUDED_NFT) revert ExcludedFromPrizes(a.nftId);
+    │                                          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/require-revert-in-loop
+
+warning[require-revert-in-loop]: `require` or `revert` inside a loop
+    ╭▸ src/GameRewards.sol:363:63
+    │
+363 │             if (!agent.registered || agent.officialWins == 0) revert IneligibleWinner();
+    │                                                               ━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/require-revert-in-loop
+
+warning[require-revert-in-loop]: `require` or `revert` inside a loop
+    ╭▸ src/GameRewards.sol:364:63
+    │
+364 │             if (allocations[a.nftId].recipient != address(0)) revert DuplicateAllocation();
+    │                                                               ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/require-revert-in-loop
+
+warning[require-revert-in-loop]: `require` or `revert` inside a loop
+    ╭▸ src/GameRewards.sol:365:87
+    │
+365 │             if (a.tokenAmount == 0 && a.ethAmount == 0 && a.collection == address(0)) revert InvalidAllocation();
+    │                                                                                       ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/require-revert-in-loop
+
+warning[require-revert-in-loop]: `require` or `revert` inside a loop
+    ╭▸ src/GameRewards.sol:367:53
+    │
+367 │                 if (a.prizeTokenId == EXCLUDED_NFT) revert ExcludedFromPrizes(a.prizeTokenId);
+    │                                                     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/require-revert-in-loop
+
+warning[require-revert-in-loop]: `require` or `revert` inside a loop
+    ╭▸ src/GameRewards.sol:369:44
+    │
+369 │                 if (allocatedNFTs[nftKey]) revert DuplicateAllocation();
+    │                                            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/require-revert-in-loop
+
+warning[require-revert-in-loop]: `require` or `revert` inside a loop
+    ╭▸ src/GameRewards.sol:372:88
+    │
+372 │                 if (IERC721Minimal(a.collection).ownerOf(a.prizeTokenId) != custodian) revert InvalidAllocation();
+    │                                                                                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/require-revert-in-loop
+
+warning[require-revert-in-loop]: `require` or `revert` inside a loop
+    ╭▸ src/GameRewards.sol:375:17
+    │
+375 │                 revert InvalidAllocation();
+    │                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/require-revert-in-loop
+
+warning[arbitrary-send-eth]: ETH is sent to a user-controlled destination; restrict the destination or the caller
+    ╭▸ src/GameRewards.sol:401:30
+    │
+401 │         if (a.ethAmount > 0) SafeTransferLib.safeTransferETH(a.recipient, a.ethAmount);
+    │                              ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/arbitrary-send-eth
+
+warning[reentrancy-no-eth]: external call can be reentered before `locked` is updated
+    ╭▸ src/GameRewards.sol:404:17
+    │
+404 │                 nftTreasury.deliverPrize(a.collection, a.prizeTokenId, a.recipient);
+    │                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-no-eth
+
+warning[reentrancy-no-eth]: external call can be reentered before `locked` is updated
+    ╭▸ src/GameRewards.sol:406:17
+    │
+406 │                 IERC721Minimal(a.collection).safeTransferFrom(address(this), a.recipient, a.prizeTokenId);
+    │                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-no-eth
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/GameRewards.sol:392:13
+    │
+392 │         if (block.timestamp < seasonStart + SEASON_LENGTH || block.timestamp > claimDeadline) {
+    │             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/GameRewards.sol:392:62
+    │
+392 │         if (block.timestamp < seasonStart + SEASON_LENGTH || block.timestamp > claimDeadline) {
+    │                                                              ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[reentrancy-events]: event emitted after an external call; reentrancy can reorder or fabricate logs that off-chain consumers rely on
+    ╭▸ src/GameRewards.sol:410:9
+    │
+410 │         emit RewardClaimed(nftId, a.recipient, a.tokenAmount, a.ethAmount);
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-events
+
+warning[solmate-safe-transfer-lib]: the `SafeTransferLib` from Solmate does not check that the token has code, so a transfer to a token-less address succeeds silently
+    ╭▸ src/GameRewards.sol:400:32
+    │
+400 │         if (a.tokenAmount > 0) daemon.safeTransfer(a.recipient, a.tokenAmount);
+    │                                ━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/solmate-safe-transfer-lib
+
+warning[missing-events-access-control]: `owner` is changed without an event but is used for access control
+   ╭▸ src/DistributionReceiver.sol:68:9
+   │
+68 │         owner = msg.sender;
+   │         ━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[missing-events-access-control]: `pendingOwner` is changed without an event but is used for access control
+   ╭▸ src/DistributionReceiver.sol:69:9
+   │
+69 │         pendingOwner = address(0);
+   │         ━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[solmate-safe-transfer-lib]: the `SafeTransferLib` from Solmate does not check that the token has code, so a transfer to a token-less address succeeds silently
+   ╭▸ src/DistributionReceiver.sol:98:9
+   │
+98 │         daemon.safeTransfer(gameRewards, game);
+   │         ━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/solmate-safe-transfer-lib
+
+warning[solmate-safe-transfer-lib]: the `SafeTransferLib` from Solmate does not check that the token has code, so a transfer to a token-less address succeeds silently
+   ╭▸ src/DistributionReceiver.sol:99:9
+   │
+99 │         daemon.safeTransfer(development, dev);
+   │         ━━━━━━━━━━━━━━━━━━━
+   │
+   ╰ help: https://getfoundry.sh/forge/linting/solmate-safe-transfer-lib
+
+warning[solmate-safe-transfer-lib]: the `SafeTransferLib` from Solmate does not check that the token has code, so a transfer to a token-less address succeeds silently
+    ╭▸ src/DistributionReceiver.sol:100:9
+    │
+100 │         daemon.safeTransfer(founder, found);
+    │         ━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/solmate-safe-transfer-lib
+
+warning[missing-events-access-control]: `owner` is changed without an event but is used for access control
+    ╭▸ src/NFTTreasury.sol:112:9
+    │
+112 │         owner = msg.sender;
+    │         ━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[missing-events-access-control]: `pendingOwner` is changed without an event but is used for access control
+    ╭▸ src/NFTTreasury.sol:113:9
+    │
+113 │         pendingOwner = address(0);
+    │         ━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-events-access-control
+
+warning[missing-zero-check]: address parameter is used in a state write or value transfer without a zero-address check
+    ╭▸ src/NFTTreasury.sol:154:25
+    │
+154 │     function sealPolicy(address game, IPoolManager manager) external onlyOwner unsealed {
+    │                         ━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/missing-zero-check
+
+warning[arbitrary-send-eth]: ETH is sent to a user-controlled destination; restrict the destination or the caller
+    ╭▸ src/NFTTreasury.sol:201:9
+    │
+201 │         IMarketplace(marketplace).buy{value: asset == address(0) ? price : 0}(collection, tokenId, asset, price);
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/arbitrary-send-eth
+
+warning[reentrancy-balance]: external call can be reentered before a stale contract balance is checked
+    ╭▸ src/NFTTreasury.sol:201:9
+    │
+201 │         IMarketplace(marketplace).buy{value: asset == address(0) ? price : 0}(collection, tokenId, asset, price);
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-balance
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/NFTTreasury.sol:181:13
+    │
+181 │         if (block.timestamp > deadline || deadline > block.timestamp + 1 days) revert Expired();
+    │             ━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/NFTTreasury.sol:181:43
+    │
+181 │         if (block.timestamp > deadline || deadline > block.timestamp + 1 days) revert Expired();
+    │                                           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/NFTTreasury.sol:188:13
+    │
+188 │         if (block.timestamp >= p.dayStart + 1 days) {
+    │             ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/block-timestamp
+
+warning[reentrancy-events]: event emitted after an external call; reentrancy can reorder or fabricate logs that off-chain consumers rely on
+    ╭▸ src/NFTTreasury.sol:212:9
+    │
+212 │         emit Purchased(marketplace, collection, tokenId, asset, charged);
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-events
+
+warning[solmate-safe-transfer-lib]: the `SafeTransferLib` from Solmate does not check that the token has code, so a transfer to a token-less address succeeds silently
+    ╭▸ src/NFTTreasury.sol:198:13
+    │
+198 │             ERC20(asset).safeApprove(marketplace, 0);
+    │             ━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/solmate-safe-transfer-lib
+
+warning[solmate-safe-transfer-lib]: the `SafeTransferLib` from Solmate does not check that the token has code, so a transfer to a token-less address succeeds silently
+    ╭▸ src/NFTTreasury.sol:199:13
+    │
+199 │             ERC20(asset).safeApprove(marketplace, price);
+    │             ━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/solmate-safe-transfer-lib
+
+warning[solmate-safe-transfer-lib]: the `SafeTransferLib` from Solmate does not check that the token has code, so a transfer to a token-less address succeeds silently
+    ╭▸ src/NFTTreasury.sol:202:34
+    │
+202 │         if (asset != address(0)) ERC20(asset).safeApprove(marketplace, 0);
+    │                                  ━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/solmate-safe-transfer-lib
+
+warning[reentrancy-no-eth]: external call can be reentered before `locked` is updated
+    ╭▸ src/NFTTreasury.sol:220:9
+    │
+220 │         IERC721Minimal(collection).safeTransferFrom(address(this), recipient, tokenId);
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-no-eth
+
+warning[reentrancy-events]: event emitted after an external call; reentrancy can reorder or fabricate logs that off-chain consumers rely on
+    ╭▸ src/NFTTreasury.sol:224:9
+    │
+224 │         emit PrizeDelivered(collection, tokenId, recipient);
+    │         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://getfoundry.sh/forge/linting/reentrancy-events
+
+warning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`
+    ╭▸ test/GameRewards.t.sol:150:25
+    │
+150 │         uint256 start = block.timestamp + 1 days;
+    │                         ━━━━━━━━━━━━━━━
+    ‡
+157 │         vm.warp(start);
+    │         ────────────── `vm.warp` changes this environment here
+    │
+    ├ help: capture it with `vm.getBlockTimestamp()` instead
+    ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation
+
+warning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`
+    ╭▸ test/GameRewards.t.sol:187:25
+    │
+187 │         uint256 start = block.timestamp + 1 days;
+    │                         ━━━━━━━━━━━━━━━
+    ‡
+190 │         vm.warp(start);
+    │         ────────────── `vm.warp` changes this environment here
+    │
+    ├ help: capture it with `vm.getBlockTimestamp()` instead
+    ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation
+
+warning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`
+    ╭▸ test/GameRewards.t.sol:332:23
+    │
+332 │         uint256 end = block.timestamp;
+    │                       ━━━━━━━━━━━━━━━
+333 │         vm.warp(end - 1);
+    │         ──────────────── `vm.warp` changes this environment here
+    │
+    ├ help: capture it with `vm.getBlockTimestamp()` instead
+    ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation
+
+warning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`
+    ╭▸ test/GameRewards.t.sol:389:25
+    │
+389 │         uint256 start = block.timestamp + 1 days;
+    │                         ━━━━━━━━━━━━━━━
+    ‡
+392 │         vm.warp(start);
+    │         ────────────── `vm.warp` changes this environment here
+    │
+    ├ help: capture it with `vm.getBlockTimestamp()` instead
+    ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation
+
+warning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`
+   ╭▸ test/NFTTreasury.t.sol:56:74
+   │
+56 │         treasury.buyNFT(address(market), address(nft), id, asset, price, block.timestamp + 5 minutes);
+   │                                                                          ━━━━━━━━━━━━━━━
+   ‡
+94 │         vm.warp(block.timestamp + 1 days);
+   │         ───────────────────────────────── `vm.warp` changes this environment here
+   │
+   ├ help: capture it with `vm.getBlockTimestamp()` instead
+   ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation
+
+warning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`
+   ╭▸ test/NFTTreasury.t.sol:94:17
+   │
+94 │         vm.warp(block.timestamp + 1 days);
+   │         ────────━━━━━━━━━━━━━━━────────── `vm.warp` changes this environment here
+   │
+   ├ help: capture it with `vm.getBlockTimestamp()` instead
+   ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation
+
+warning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`
+   ╭▸ test/NFTTreasury.t.sol:56:74
+   │
+56 │         treasury.buyNFT(address(market), address(nft), id, asset, price, block.timestamp + 5 minutes);
+   │                                                                          ━━━━━━━━━━━━━━━
+   ‡
+96 │         vm.warp(block.timestamp + 1 days);
+   │         ───────────────────────────────── `vm.warp` changes this environment here
+   │
+   ├ help: capture it with `vm.getBlockTimestamp()` instead
+   ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation
+
+warning[environment-read-across-mutation]: `block.timestamp` may be reused across `vm.warp`
+   ╭▸ test/NFTTreasury.t.sol:96:17
+   │
+96 │         vm.warp(block.timestamp + 1 days);
+   │         ────────━━━━━━━━━━━━━━━────────── `vm.warp` changes this environment here
+   │
+   ├ help: capture it with `vm.getBlockTimestamp()` instead
+   ╰ help: https://getfoundry.sh/forge/linting/environment-read-across-mutation
+

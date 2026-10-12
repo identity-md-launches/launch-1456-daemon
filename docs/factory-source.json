@@ -1,0 +1,153 @@
+{
+  "address": "0x12C63b581d07093F6126bc02263c58f7EadaA96F",
+  "chainId": "1",
+  "match": "match",
+  "creationMatch": "match",
+  "runtimeMatch": "match",
+  "verifiedAt": "2026-10-08T17:44:20Z",
+  "deployment": {
+    "transactionHash": "0x1441cd85a00735eb68f4e4964bc07fa4b21b038e9e1d7dcab2b5efbd7f9178f3",
+    "blockNumber": "26128678",
+    "transactionIndex": "147",
+    "deployer": "0x047F606fD5b2BaA5f5C6c4aB8958E45CB6B054B7"
+  },
+  "compilation": {
+    "language": "Solidity",
+    "compiler": "solc",
+    "compilerVersion": "0.8.26+commit.8a97fa7a",
+    "compilerSettings": {
+      "viaIR": false,
+      "metadata": {
+        "appendCBOR": true,
+        "bytecodeHash": "none",
+        "useLiteralContent": false
+      },
+      "optimizer": {
+        "runs": 200,
+        "enabled": true
+      },
+      "evmVersion": "cancun",
+      "remappings": [
+        "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+        "forge-std/=lib/forge-std/src/",
+        "solmate/=lib/solmate/",
+        "v4-core/=lib/v4-core/",
+        "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+        "@openzeppelin/=lib/v4-core/lib/openzeppelin-contracts/",
+        "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+        "hardhat/=lib/v4-core/node_modules/hardhat/",
+        "openzeppelin-contracts/=lib/openzeppelin-contracts/"
+      ]
+    },
+    "name": "LaunchFactory",
+    "fullyQualifiedName": "src/LaunchFactory.sol:LaunchFactory"
+  },
+  "source": "https://sourcify.dev/server/v2/contract/1/0x12C63b581d07093F6126bc02263c58f7EadaA96F?fields=all",
+  "files": {
+    "test/verified/LaunchFactory.sol": {
+      "originalPath": "src/LaunchFactory.sol",
+      "originalSha256": "77557a133a299aca08011d3151894070f1960e88c40f4a40aebe205a26381e72",
+      "adaptation": "Only @openzeppelin import prefix changed"
+    },
+    "test/verified/openzeppelin/token/ERC20/IERC20.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+      "originalSha256": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/token/ERC20/utils/SafeERC20.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+      "originalSha256": "93685e4e976be584a5e6abfc37376fe17c99bee53e07610efcc1ce51868e90d1",
+      "adaptation": "none"
+    },
+    "test/verified/HookFlags.sol": {
+      "originalPath": "src/HookFlags.sol",
+      "originalSha256": "52cec85dc1af6964e2da6fa5caf63e40dc901e15585c7ef7bd04c5ce36ac35c3",
+      "adaptation": "Only @openzeppelin import prefix changed"
+    },
+    "test/verified/LaunchRegistry.sol": {
+      "originalPath": "src/LaunchRegistry.sol",
+      "originalSha256": "19daa2fb99b08523de3a13598324b925731b7384326e34a3fa6cfc8ef75b5b69",
+      "adaptation": "Only @openzeppelin import prefix changed"
+    },
+    "test/verified/MerkleDistributor.sol": {
+      "originalPath": "src/MerkleDistributor.sol",
+      "originalSha256": "4fddf887aa7db38da7656069c5c1f1531dda5eea5903e726414f95365368f3c9",
+      "adaptation": "Only @openzeppelin import prefix changed"
+    },
+    "test/verified/LaunchFees.sol": {
+      "originalPath": "src/LaunchFees.sol",
+      "originalSha256": "a4cd760816c6fac89eec431724a9f5b1af64ab74c5cdadc057f4d66470618d71",
+      "adaptation": "Only @openzeppelin import prefix changed"
+    },
+    "test/verified/PoolFees.sol": {
+      "originalPath": "src/PoolFees.sol",
+      "originalSha256": "737509ccca61d83f843bb19c7543054972ce496e7435e0e83c770efe7cdc27ac",
+      "adaptation": "Only @openzeppelin import prefix changed"
+    },
+    "test/verified/openzeppelin/interfaces/IERC1363.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol",
+      "originalSha256": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/interfaces/IERC20Metadata.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/interfaces/IERC20Metadata.sol",
+      "originalSha256": "0ef8d844d8e066abd5c0d8cc1c550c89f2628a4ea9c9bb16c7593d4207800ca8",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/utils/cryptography/MerkleProof.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol",
+      "originalSha256": "fd5635e85da7518bf1a153eaa99d3fad8bb6700f9d5d9cb70ddde75935cb122c",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/utils/ReentrancyGuard.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+      "originalSha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/access/Ownable2Step.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol",
+      "originalSha256": "c75345d7b9feef17ae29f2a800ca2f65f8021cf80436a41d6ec00f57f5180f36",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/interfaces/IERC20.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol",
+      "originalSha256": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/interfaces/IERC165.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol",
+      "originalSha256": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/token/ERC20/extensions/IERC20Metadata.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+      "originalSha256": "0b7132f17d14d1d84b41b0bb429be62dafdff00fd3470f68724d8018eb07f57a",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/utils/cryptography/Hashes.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/utils/cryptography/Hashes.sol",
+      "originalSha256": "ecdbce11c5ecdf32b306e26b8ab1b878327c08154b4ccd04518b6b64b298cf31",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/utils/StorageSlot.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+      "originalSha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/access/Ownable.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+      "originalSha256": "38578bd71c0a909840e67202db527cc6b4e6b437e0f39f0c909da32c1e30cb81",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/utils/introspection/IERC165.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+      "originalSha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+      "adaptation": "none"
+    },
+    "test/verified/openzeppelin/utils/Context.sol": {
+      "originalPath": "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+      "originalSha256": "847fda5460fee70f56f4200f59b82ae622bb03c79c77e67af010e31b7e2cc5b6",
+      "adaptation": "none"
+    }
+  }
+}

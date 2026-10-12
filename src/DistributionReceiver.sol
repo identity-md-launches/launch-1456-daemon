@@ -40,6 +40,7 @@ contract DistributionReceiver {
     error ZeroAddress();
     error RecipientsNotConfigured();
     error NothingToDistribute();
+    error RecipientsAlreadyConfigured();
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert NotOwner();
@@ -71,6 +72,7 @@ contract DistributionReceiver {
     /// @notice Sets the three recipients. All must be non-zero.
     function setRecipients(address gameRewards_, address development_, address founder_) external onlyOwner {
         if (gameRewards_ == address(0) || development_ == address(0) || founder_ == address(0)) revert ZeroAddress();
+        if (configured()) revert RecipientsAlreadyConfigured();
         gameRewards = gameRewards_;
         development = development_;
         founder = founder_;

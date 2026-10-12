@@ -1,269 +1,168 @@
-# DAEMON — Uniswap v4 hook and treasury prototype (TEST ONLY)
+# DAEMON prototype — TEST ONLY
 
-Test-only prototype for the DAEMON launch on https://imdfamily.com. Nothing here was deployed to any
-network, no token was launched, no funds were spent, nothing was posted to X and no hackathon entry
-was submitted. The existing website was not modified: this repository contains only Solidity, tests,
-ABIs and documentation.
+This correction implements a fixed **1% native ETH hook fee**, protected NFT custody and season rewards,
+and the verified IMD payer-fee assignment path. This is source and local test work only. No contracts were
+deployed, no token was launched/replaced/re-minted, no real funds were spent, and https://imdfamily.com was
+not modified. No real agent match, final share cards, website integration or live fee assignment is claimed.
 
-## What is delivered
+## Deliverables and checks
 
-| Path | Contents |
+| Path | Purpose |
 | --- | --- |
-| `src/DaemonToken.sol` | `contract DaemonToken`: ERC-20 "DAEMON"/"DAEMON", 18 decimals, 1,000,000,000 supply minted once to the deployer. No mint, burn, owner, pause or proxy. |
-| `src/DaemonHook.sol` | `contract DaemonHook`: the v4 hook. Fixed 1% fee on the DAEMON leg of every buy and sell, settled as ERC-6909 claims inside the swap, forwarded to the NFT treasury by `forwardFees()`. |
-| `src/NFTTreasury.sol` | `contract NFTTreasury`: receives the fees and buys NFTs outside swap callbacks with allowlists, caps and an ownership check. |
-| `src/DistributionReceiver.sol` | `contract DistributionReceiver`: splits the 7% remainder 4 : 1 : 2 into game rewards, development and founder (unlocked). |
-| `src/GameRewards.sol` | `contract GameRewards`: game prize pool, on-chain "winner stays" ladder record, founder NFT #222 excluded, prizes inactive, four-week official season. |
-| `src/HookFlags.sol` | Permission-bit helpers shared by tests and the deploy script. |
-| `script/Deploy.s.sol` | Rehearsal deployment with an explicit `Config` struct (tested directly, no environment reads). |
-| `test/` | 66 tests: fee accounting in both token orders, exact-input/output, native-pair token-only seeding, permissions, unauthorized access, treasury guard rails, distribution, ladder and prizes. |
-| `abi/` | ABI JSON for every contract. |
-| `lib/` | Vendored `forge-std`, `v4-core`, `solmate` as plain files (no submodules). |
+| `src/DaemonHook.sol` | Native ETH fee accounting, ERC-6909 settlement and permissionless forwarding |
+| `src/NFTTreasury.sol` | ETH/ERC-20 NFT purchases under a sealed policy; no general withdrawals |
+| `src/GameRewards.sol` | Existing arena ladder, fixed season budgets, published allocations and one-time claims |
+| `src/DistributionReceiver.sol` | Immutable-after-setup 4:1:2 split of the 7% remainder |
+| `src/DaemonToken.sol` | Unchanged fixed 1 billion supply, 18 decimals; no additional mint/burn interface |
+| `src/ICreatorFeeFactory.sol` | Verified factory fee interface, including `setRequester` |
+| `test/FactoryIntegration.t.sol` | Actual verified factory logic exercised with a local v4 PoolManager |
+| `test/verified/` | Offline factory and required OpenZeppelin source fixtures, as ordinary files |
+| `abi/` | Regenerated contract ABIs; removed withdrawal/award methods are absent |
+| `docs/FACTORY.md` | Source provenance, exact allocation evidence and payer responsibilities |
+| `docs/SECURITY.md` | Threat model, operational limits and completed/open checklist |
+| `docs/SEASON.md` | Eligibility, rules commitment, authorizer responsibilities and claim lifecycle |
+| `docs/validation/` | Reproducible command results from this delivery |
 
-Checks run locally with solc 0.8.26 pinned in `foundry.toml`:
+Use the repository's unchanged configuration: **solc 0.8.26**, Cancun, optimizer 200, no via-IR, no FFI,
+no filesystem cheatcodes. Dependencies needed by the tests are all present as ordinary files. The
+existing protected configuration, remappings and `lib/` were not edited.
 
-```
-forge build            # ok
-forge test             # 66 passed, 0 failed
-forge fmt --check      # ok
-```
-
-The pinned IMD floor tests (`Hook.protected.t.sol`, `Token.protected.t.sol`) were also run in a scratch
-directory with the verifier's environment (`IMD_HOOK_CREATION_CODE`, `IMD_HOOK_FLAGS=8396`,
-`IMD_POOL_MANAGER`, `IMD_TOKEN_PROBE`, `IMD_FACTORY_PROBE`, fee 12500, spacing 100): 11 passed.
-
-## Hook design
-
-### Configuration record (OpenZeppelin Wizard shape)
-
-```json
-{
-  "hook": "BaseHook",
-  "name": "DaemonHook",
-  "pausable": false,
-  "currencySettler": false,
-  "safeCast": false,
-  "transientStorage": false,
-  "shares": { "options": false },
-  "permissions": {
-    "beforeInitialize": true,
-    "afterInitialize": false,
-    "beforeAddLiquidity": false,
-    "beforeRemoveLiquidity": false,
-    "afterAddLiquidity": false,
-    "afterRemoveLiquidity": false,
-    "beforeSwap": true,
-    "afterSwap": true,
-    "beforeDonate": false,
-    "afterDonate": false,
-    "beforeSwapReturnDelta": true,
-    "afterSwapReturnDelta": true,
-    "afterAddLiquidityReturnDelta": false,
-    "afterRemoveLiquidityReturnDelta": false
-  },
-  "inputs": {},
-  "access": "ownable",
-  "info": { "license": "MIT" }
-}
+```sh
+forge build
+forge test
+forge fmt --check
+python3 scripts/verify_sources.py
+python3 scripts/export_abis.py --check
 ```
 
-The hook is written against v4-core directly (no v4-periphery / uniswap-hooks dependency); it inherits
-`IHooks` and `IUnlockCallback`, validates its own address bits in the constructor with
-`Hooks.validateHookPermissions`, and uses a two-step owner. Address flags: `0x20CC` (8396).
+The tests use explicit local fixtures, without environment reads, RPC access, mainnet forks, private keys
+or external services. See `docs/validation/RESULTS.md` for exact counts and additional checks.
 
-### Fee mechanics
+## Hook ETH fee
 
-The fee is 1% (`FEE_BPS = 100`) of the DAEMON leg. "IMD side" in the brief is read as the DAEMON token
-side; the paired currency (ETH) is never charged. The LP fee of the pool (the launch tier, 12500) is a
-separate PoolManager mechanism and is untouched (`test_lpFeeAccruesToLiquidityIndependently`).
+Only the factory may initialize the single DAEMON/native-ETH pool. Other pairs are rejected. The hook's
+address must carry flags **8396 / 0x20cc**: beforeInitialize, beforeSwap, afterSwap, beforeSwapReturnDelta,
+afterSwapReturnDelta. It has no liquidity callbacks, upgrades, adjustable fee or trader exemption.
 
-| Swap | DAEMON is | Callback | What happens |
-| --- | --- | --- | --- |
-| Buy, exact input (ETH in) | unspecified | `afterSwap` | 1% of the DAEMON the pool produced is kept; the trader receives 99%. |
-| Buy, exact output (X DAEMON out) | specified | `beforeSwap` | The pool delivers X + 1%·X; the trader gets exactly X and pays ETH for X + 1%·X. |
-| Sell, exact input (X DAEMON in) | specified | `beforeSwap` | The pool receives X − 1%·X; the trader pays exactly X. |
-| Sell, exact output (Y ETH out) | unspecified | `afterSwap` | The trader pays 1% more DAEMON than the pool demanded. |
+The integer fee is `floor(ETH base / 100)` wei. The base is the user-specified ETH amount when ETH is
+specified; otherwise it is the actual ETH pool delta before the hook charge. It is assessed once:
 
-Settlement: the hook's positive fee delta is netted by `poolManager.mint(hook, daemonId, fee)` inside
-the callback, so no PoolManager balance is needed and no transfer happens during a swap. A pool seeded
-with tokens only on a fresh manager that holds no ETH trades normally
-(`test_nativePairTokenOnlySeedBuyAndSell`). `forwardFees()` may be called by anyone, outside any swap: it
-unlocks the manager, burns the claims and `take`s the DAEMON to the treasury. If the treasury is not yet
-configured the call reverts with `TreasuryNotConfigured` and fees keep accruing as claims; a swap can
-never be halted by the recipient. The treasury receives ERC-20 DAEMON, so "recipient cannot receive ETH"
-does not apply; a treasury that could not receive ERC-20 would only block `forwardFees()`, never a swap.
-
-### NoOp justification for `beforeSwapReturnDelta`
-
-The returned specified delta is always `+fee` with `fee = |amountSpecified| / 100`, never the whole
-amount; the PoolManager's `HookDeltaExceedsSwapAmount` check and the tests `test_sellExactInput_*`,
-`test_buyExactOutput_*` and the fuzz tests pin it to exactly 1%. The hook holds no user funds beyond the
-claims it mints for its own fee, has no liquidity callbacks, no delegatecall, no selfdestruct, no proxy
-and no way to change `FEE_BPS`.
-
-### Launch gate
-
-`beforeInitialize` accepts exactly one pool: the call must come from `factory` ("$factory"), the key must
-contain `daemon` ("$token"), and any LP fee / tick spacing the manifest sets is accepted. A second
-initialization reverts (`PoolAlreadyInitialized`).
-
-### Security checklist (uniswap-v4-security)
-
-| # | Item | Status |
+| Trade | ETH base | Fee behavior |
 | --- | --- | --- |
-| 1 | Every callback checks `msg.sender == poolManager` | done, `test_callbacksRefuseNonManager` + floor test |
-| 2 | Router allowlisting | not needed: the fee does not depend on who routes |
-| 3 | Unbounded loops | none in the hook; the ladder queue is append-only with a head index |
-| 4 | Reentrancy | hook makes no external call except to the PoolManager; treasury purchase is `nonReentrant` |
-| 5 | Delta accounting sums to zero | mint(−fee) + hook delta(+fee) = 0; every swap test settles |
-| 6 | Fee-on-transfer tokens | DAEMON is plain; the pair is ETH |
-| 7 | No hardcoded addresses | all addresses are constructor arguments or owner-set |
-| 8 | Slippage | untouched; the router's limits apply to the net amounts |
-| 9 | Sensitive data | none |
-| 10 | Upgrade mechanisms | none |
-| 11 | `beforeSwapReturnDelta` justified | above |
-| 12 | Fuzz tests | two fuzz tests on buy/sell fee, one on distribution conservation (64 runs) |
-| 13 | Invariant tests | not written (time); listed as open |
+| Buy, exact ETH input `X` | `X` | Trader pays exactly `X`; the pool receives `X - floor(X/100)` |
+| Buy, exact DAEMON output | Actual ETH input required by pool | Trader pays pool input plus `floor(input/100)` |
+| Sell, exact DAEMON input | Actual ETH output produced by pool | Trader receives pool output minus `floor(output/100)` |
+| Sell, exact ETH output `Y` | `Y` | Pool produces `Y + floor(Y/100)`; trader receives exactly `Y` |
 
-Slither and Mythril were not available in this environment and did not run. Tests passing is not an
-audit: an independent adversarial review is required before any funds are placed behind these contracts.
+For exact ETH output the 1% is based on the requested net amount, not a gross-up calculation. All rounding
+is down; ETH bases below 100 wei have zero fee. DAEMON is never charged by this hook. The factory LP fee
+is independent and may also be charged by the pool on its input currency.
 
-## Production allocation (1,000,000,000 DAEMON)
+Specified-ETH trades must fill completely or revert, including their fee claims. This avoids charging
+1% of an unfilled request at a price limit. Unspecified-ETH partial fills charge only the actual ETH delta.
+Routers must account for the net hook amounts, slippage and this full-fill restriction.
 
-| Share | Amount | Where it goes |
-| --- | --- | --- |
-| 83% liquidity | 830,000,000 | pool, seeded by the launch factory |
-| 10% IMD swarm | 100,000,000 | fixed swarm allocation handled by the factory |
-| 7% remainder | 70,000,000 | `DistributionReceiver` (`remainderTo`), which splits it: |
-| &nbsp;&nbsp;4% game rewards | 40,000,000 | `GameRewards` |
-| &nbsp;&nbsp;1% development | 10,000,000 | owner-set development address |
-| &nbsp;&nbsp;2% founder | 20,000,000 | owner-set founder address, unlocked, no vesting |
+The hook mints **ETH-denominated ERC-6909 claims**, not DAEMON, within the PoolManager callback. The
+positive fee delta offsets the claim mint, so swaps settle even when a token-only seed initially holds
+no ETH. `forwardFees()` is permissionless: outside swaps it unlocks the manager, burns the claims and
+sends every collected wei to NFTTreasury. Treasury setup is one-time; fees can accrue before setup. A
+failed ETH transfer reverts the forwarding transaction and retains the claims without stopping swaps.
+No pool position is reduced. Swaps never buy NFTs.
 
-`DistributionReceiver.distribute()` splits whatever DAEMON it holds 4 : 1 : 2 and reverts until all three
-recipients are set. No minting or burning exists anywhere (`test_noMintOrBurnPath`, floor tests).
+Native ETH is currency address zero and always sorts first in real Uniswap v4 pools. Tests cover all four
+real swap modes, settlement and both directions, explicitly reject reversed native keys in the real
+manager, and cover all eight order/direction/mode combinations in a labeled synthetic callback harness.
+There is no claim that an ETH-as-currency1 pool can be initialized in real v4. WETH is not silently treated
+as native ETH.
 
-**Assumption:** the factory sends the 83% to the pool and the 10% swarm share itself, and sends the 7% to
-`remainderTo`. If instead the factory sends 17% to `remainderTo`, the swarm share must be split off first;
-the receiver's fixed 4 : 1 : 2 ratio would then be wrong and needs a 10 : 4 : 1 : 2 variant. Confirm the
-factory's split before the manifest is written.
+## Allocation and LP creator fees
 
-## Creator share of pool fees → game rewards
+| Allocation | DAEMON | Percent |
+| --- | ---: | ---: |
+| Factory-owned pool liquidity | 830,000,000 | 83% |
+| Fixed IMD swarm distributor | 100,000,000 | 10% |
+| GameRewards | 40,000,000 | 4% |
+| Development | 10,000,000 | 1% |
+| Founder, immediately unlocked | 20,000,000 | 2% |
+| Total | 1,000,000,000 | 100% |
 
-The brief asks to route the entire creator share of pool fees to game rewards and warns not to assume
-`remainderTo` controls fee revenue. **Verified from the inputs available here:** `remainderTo` is a token
-distribution destination (the 7% remainder) and nothing in it concerns fee revenue. **Not verifiable
-here:** the factory's `LaunchFees` contract, its 80% payer / 20% network split and the setter or
-recipient field through which the payer's share is forwarded are not among the pinned inputs and
-`.imd/reads/network.json` was not provided, so the forwarding mechanism could not be inspected.
-`GameRewards` is built to be that recipient either way: it accepts ETH (`receive()`) and ERC-20, and the
-owner can sweep ETH. **Operational step:** when the launch's fee-recipient mechanism is known, point the
-payer share at the `GameRewards` address through the factory's supported setter. Until then this is an
-open item, not an implemented route.
+The actual factory sends `supply - swarm - actual seed consumption` to `remainderTo`; setting `poolBps`
+alone is not proof of exact seeding. The local integration executes its real `launch()` with an exact
+830M token seed, proves a 70M remainder reaches DistributionReceiver, and verifies the 4:1:2 split. A
+future launch must independently verify its own seed parameters and balance changes. The factory always
+reserves 10% for the swarm. No application here can withdraw its pool principal.
 
-## NFT treasury guard rails
+**Supported creator-fee route:** the current payer/share holder calls
+`factory.setRequester(launchNumber, gameRewards)`. Anyone then calls `factory.claimFees(launchNumber)`
+or, after configuration, `gameRewards.collectCreatorFees()`. The verified source sends the entire
+creator share (80% of actual LP fees in each currency) directly to GameRewards; the other 20% goes to
+the network. GameRewards cannot reassign that share. `remainderTo` has no effect on fee recipients.
+Already-paid or already-owed payer fees require the original payer's manual forwarding; assignment
+cannot seize them. See `docs/FACTORY.md` for exact evidence and recovery behavior.
 
-- Purchases run only through `buyNFT`, called by the owner or an operator; never from a hook callback.
-- Marketplace and collection allowlists; per-purchase cap; rolling per-window cap (window length owner-set,
-  default one day). Caps start at zero so purchases are disabled until the owner sets them.
-- Allowance to the marketplace is exactly the price and is zeroed afterwards; an overcharging marketplace
-  reverts (`test_marketplaceCannotPullMoreThanThePrice`).
-- After the call the treasury checks `ownerOf(tokenId) == treasury`; a marketplace that takes payment without
-  delivering reverts the whole purchase (`test_marketplaceThatKeepsPaymentWithoutDeliveringReverts`).
-- The treasury and the game contracts have no reference to the PoolManager; the hook has no liquidity
-  callbacks. Pool liquidity is never withdrawn for rewards or NFT purchases
-  (`test_forwardSendsEveryFeeToTreasuryWithoutTouchingLiquidity`).
-- Mocks: `test/mocks/MockERC721.sol`, `test/mocks/MockMarketplace.sol` (with rug and overcharge modes).
+## Protected treasury and reward operations
 
-## Agent chess investigation
+NFTTreasury accepts native ETH and tokens. Before purchases, its owner configures vetted marketplace
+adapters, NFT collections, payment assets and per-asset per-purchase, 24-hour-window and lifetime caps,
+then calls `sealPolicy(gameRewards, poolManager)`. The sealed policy cannot be broadened or its recipient
+changed, even after ownership transfer. Operators can be changed, but every operator and the owner
+obey identical purchase checks. Administrators can pause purchases or permanently disable allowlist
+entries. The initial configuration must be reviewed **before funding**.
 
-Observed on https://imdfamily.com on 2026-10-12 (pages `/game.html`, `/chess.html`, `/agents.html`,
-scripts `/agent-panel.js`, `/agent-connect.js`, client `/agent-client.py`, endpoint
-`/api/games/arena/public`).
+Purchases have an explicit deadline (at most one day ahead), use a fixed marketplace interface, fix NFT
+delivery to the treasury, reject already-owned NFTs, check actual delivery, and bound spending. ERC-20
+allowances are reset to zero, set to exactly the purchase ceiling and cleared after use. ETH purchases
+send only the ceiling; refunds count against actual spend. The configured manager must be locked during
+purchases. No arbitrary calldata, approvals, recipient argument, sweep, general transfer or emergency
+recovery function exists. NFT #222 cannot be purchased or paid as a prize.
 
-**What exists today.** A local chess page ("Vs computer or a friend", local engine) and an agent arena.
-The arena's public API answered `{"matches":[],"waiting":[],"rows":[],"official":false,"season":"Not
-started"}`. Agent authentication is: `POST /api/games/challenge {wallet, tokenId}` → sign the returned
-message with the wallet that owns that IdentityMD NFT (`personal_sign`) → `POST /api/games/login {id,
-signature}` → a one-hour Bearer token. The published client (`agent-client.py`) then polls
-`/api/games/arena`, needs an authenticated **Codex or Claude CLI** installed on the owner's machine
-(`codex exec …` or `claude -p …`), uses that subscription's quota to choose each move, has "no
-chess-engine fallback", plays exactly one practice match and stops. The site states: "Each participant
-needs a different IdentityMD NFT, its owner wallet and an authenticated Codex or Claude CLI", "No winner
-continues automatically after this one-match test", "automatic posting and automatic IMD swarm dispatch
-are not connected", "Practice only", "Move limit: five minutes per turn", leaderboard by longest streak
-then wins, draws return both to the queue.
+GameRewards accepts fees and the 4% allocation. It makes no purchases. Only documented, capped rewards
+from its one configured four-week season can leave: DAEMON, ETH and individually allocated ERC-721 prizes.
+Its fixed authorizer publishes allocations after the season, and claims pay each winner's registered
+wallet once. NFT prizes can be held by GameRewards or drawn from the fixed NFTTreasury. The treasury
+accepts prize-transfer instructions only from GameRewards' claim path. Identity NFT #222 is excluded
+as a winner too. The separate founder token allocation is unaffected.
 
-**Winner-stays rule.** The arena already implements "winner stays, a new challenger takes the other
-seat". `GameRewards` mirrors it on-chain (`register`, `reportResult`, draw handling, `waitingCount`) so
-results reported by the arena's key can be recorded and prized later; it contains no engine and no
-simulated agent.
+This prototype retains **one season per GameRewards instance**. Budgets and recipients cannot be reset
+for a second season. Expired/unallocated funds and future fees stay protected in custody. Recurring
+seasons, emergency migration and release of such funds would require a separately specified and reviewed
+contract change; this task does not install an administrative escape path.
 
-**Blocker: swarm-to-game authentication is not supported.** Automatic participation by two IMD swarm
-agents would require (a) each agent to hold, or be able to sign with, the private key of a wallet that
-owns a distinct IdentityMD NFT, and (b) an authenticated Codex/Claude CLI session per agent. Neither is
-available to a swarm worker: the arena's own page says swarm dispatch is not connected and the one-match
-client stops after a single practice game. Running two agents here would mean fabricating wallets or NFT
-ownership, or substituting an engine, which the brief forbids. **No agents were run.** What the requester
-must decide to unblock it: either provision two operator-held wallets each owning an IdentityMD NFT (not
-#222) plus two CLI sessions and run `agent-client.py` from those machines, or ask the arena maintainers
-for a delegated agent-credential flow (for example an owner-signed delegation to an agent key) so a swarm
-worker can authenticate without the NFT owner's private key.
+## Deployment parameters and after-launch responsibilities
 
-**Prizes and seasons.** `prizesActive` is `false` and stays so for the trial; `awardPrize` reverts with
-`PrizesInactive`. NFT #222 reverts with `ExcludedFromPrizes`. Results reported before `seasonStart` count
-as test scores (`testWins`) and never enter `officialWins`/streaks. `setSeasonStart` can be set once, in
-the future, at the real launch; the official window is `SEASON_LENGTH = 4 weeks`.
+No `launch.json` is written and no broadcast was run. `script/Deploy.s.sol` is a local rehearsal helper;
+its broadcast entry point refuses chains other than local chain ID 31337. The tests call `deploy(Config)`
+directly. It is not the production factory launch implementation; factory integration is tested separately.
 
-## Deployment plan
+All application constructors avoid external calls and accept at most four arguments:
 
-Nothing in this plan was executed. The production launch is done by the IMD launch factory from the
-manifest written after acceptance; this repository does not contain a `launch.json`.
-
-1. **Manifest values** (all placeholders, no literals):
-   - `DaemonToken`: no constructor arguments. Name/symbol "DAEMON", 18 decimals, 1e27 supply to the factory.
-   - `DaemonHook(poolManager, owner, factory, token)` = `"$poolManager"`, `"$owner"`, `"$factory"`, `"$token"`.
-     Flags `8396` (`0x20CC`): beforeInitialize, beforeSwap, afterSwap, beforeSwapReturnDelta,
-     afterSwapReturnDelta. The deployer mines a CREATE2 salt for those bits (`Deploy.mineSalt`).
-   - `NFTTreasury(token, owner)`, `GameRewards(token, owner)`, `DistributionReceiver(token, owner)` =
-     `"$token"`, `"$owner"`.
-   - `pool.fee` = 12500 (launch tier), tick spacing per manifest; the hook accepts both. `remainderTo` =
-     the `DistributionReceiver` address.
-2. **Constructors** make no external calls and take at most 4 arguments each; every contract name is ≤ 32
-   characters; all library functions are internal.
-3. **After launch (owner steps, each emits an event):**
-   | Contract | Setter | Value | Source |
-   | --- | --- | --- | --- |
-   | `DaemonHook` | `setTreasury(address)` | the `NFTTreasury` address | launch record |
-   | `DistributionReceiver` | `setRecipients(game, development, founder)` | `GameRewards` address, the development wallet, the founder wallet | requester |
-   | `DistributionReceiver` | `distribute()` | anyone, once the factory has sent the remainder | — |
-   | `NFTTreasury` | `setMarketplace`, `setCollection`, `setCaps`, `setOperator` | allowlisted venue(s), collection(s), caps, buying operator | requester |
-   | `GameRewards` | `setIdentityNft(address)` | the IdentityMD NFT contract on the launch chain | requester / explorer |
-   | `GameRewards` | `setArbiter(address)` | the arena server's reporting key | arena maintainers |
-   | `GameRewards` | `setSeasonStart(uint256)` | the real launch time | requester |
-   | `GameRewards` | `setPrizesActive(true)` | only after the trial, by the owner | requester |
-   | launch factory | its fee-recipient setter | `GameRewards` address | after the mechanism is verified |
-4. **Operations:** anyone may call `forwardFees()` periodically (a keeper is fine); the treasury operator
-   buys NFTs within caps; the owner is a trust assumption for treasury custody, prize awards and all
-   setters, so it should be a multisig.
-5. **Not done, by instruction:** no mainnet deployment, no production token, no spending, no publishing.
-
-## Rehearsal script
-
-`script/Deploy.s.sol` exposes `deploy(Config)`; `test/Deploy.t.sol` calls it directly with an explicit
-config and then has the factory open the pool. `run(Config)` wraps it in a broadcast for a local anvil
-rehearsal only. No test reads environment variables.
-
-## Honest implementation status
-
-| Item | Status |
+| Contract | Constructor values |
 | --- | --- |
-| Hook: 1% DAEMON-side fee, both orders, exact in/out, claims settlement, forwarding | implemented, tested |
-| Separation from LP fee | implemented, tested |
-| Token: 1e9 supply, 18 decimals, no mint/burn | implemented, tested, floor tests pass |
-| Distribution receiver 4 : 1 : 2 of the 7% | implemented, tested; factory split assumption above |
-| NFT treasury with allowlists, caps, ownership check, mocks | implemented, tested |
-| Game rewards, #222 exclusion, prizes inactive, 4-week season, test scores excluded | implemented, tested |
-| Creator share of pool fees → game rewards | receiver ready; forwarding mechanism unverified (inputs missing) |
-| Agent chess automatic participation by two swarm agents | **blocked**: arena requires NFT-owner wallet signatures and per-agent CLI sessions; swarm dispatch not connected; no agents run |
-| Invariant tests, Slither, external audit, fork rehearsal | not done |
-| Mainnet deployment, X post, hackathon entry | not done, by instruction |
+| `DaemonToken` | None; original one-time supply goes to its deployer/factory |
+| `DaemonHook` | Target-chain PoolManager, requester owner, actual launch factory, DAEMON token |
+| `NFTTreasury`, `GameRewards`, `DistributionReceiver` | DAEMON token, requester owner |
+
+No launch chain or owner/recipient/marketplace values were invented. The launch operator must use the
+admitted chain's records, the requester's confirmed addresses and reviewed marketplace interfaces.
+Unset application settings fail closed and remain configurable through the following explicit steps:
+
+1. Owner: `hook.setTreasury(nftTreasury)` once; verify the protected contract and chain first.
+2. Owner: `receiver.setRecipients(gameRewards, development, founder)` once, using the requester's wallets.
+   Anyone calls `distribute()` after the actual 7% remainder arrives. Verify balances and total supply.
+3. Owner: configure treasury allowlists and asset caps from the approved purchasing policy, optionally
+   `setOperator`, then `sealPolicy(gameRewards, poolManager)`. Review the marketplace adapter's immutable
+   code and the collection; the generic `buy` interface is not a Seaport integration.
+4. Owner: `game.setIdentityNft` from verified collection records; `setArbiter` from the arena operator;
+   `setRewardAuthority(independentAuthorizer, nftTreasury)` from the requester. Each is one-time.
+5. Payer/share holder: verify `factory.positionOf(launchNumber)`, then call the actual factory's
+   `setRequester(launchNumber, gameRewards)`. No administrator or keeper can substitute for the payer.
+   Owner: `game.setFeeSource(factory, launchNumber)` once. Keepers may collect and forward fees periodically;
+   this code does not run a keeper or automate a wallet signature.
+6. Owner: after funding and public rule approval, `configureSeason(start, claimDeadline, tokenBudget,
+   ethBudget, nftBudget, rulesHash)`. Start must be in the future. See `docs/SEASON.md` for all bounds.
+7. Fixed arbiter reports results. Fixed reward authorizer publishes the final documented allocation once
+   after the season. Anyone relays `claimReward(nftId)` before the deadline; no caller selects a recipient.
+
+The caller owner is explicit, never implicitly the factory or `tx.origin`. Production deployment,
+wallet authorization, review of policies/venues, keeper operation and a real arena connection remain
+outside this code-only assignment.

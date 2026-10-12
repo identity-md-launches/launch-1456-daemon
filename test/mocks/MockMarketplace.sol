@@ -35,13 +35,24 @@ contract MockMarketplace {
         listings[collection][tokenId] = Listing(msg.sender, paymentToken, price);
     }
 
-    function buy(address collection, uint256 tokenId, address paymentToken, uint256 maxPrice) external {
+    function buy(address collection, uint256 tokenId, address paymentToken, uint256 maxPrice) external payable {
         Listing memory l = listings[collection][tokenId];
         if (l.seller == address(0)) revert NotListed();
         if (l.paymentToken != paymentToken) revert WrongToken();
         if (l.price > maxPrice) revert PriceTooHigh(l.price, maxPrice);
         uint256 charge = l.price + overcharge;
-        require(ERC20(paymentToken).transferFrom(msg.sender, l.seller, charge), "payment failed");
+        if (paymentToken == address(0)) {
+            require(msg.value >= charge, "payment failed");
+            (bool ok,) = l.seller.call{value: charge}("");
+            require(ok, "seller refused");
+            if (msg.value > charge) {
+                (ok,) = msg.sender.call{value: msg.value - charge}("");
+                require(ok, "refund refused");
+            }
+        } else {
+            require(msg.value == 0, "unexpected ETH");
+            require(ERC20(paymentToken).transferFrom(msg.sender, l.seller, charge), "payment failed");
+        }
         delete listings[collection][tokenId];
         if (!rug) ERC721(collection).transferFrom(l.seller, msg.sender, tokenId);
     }

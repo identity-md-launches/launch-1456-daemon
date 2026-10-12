@@ -222,6 +222,11 @@
   },
   {
     "type": "error",
+    "name": "LocalRehearsalOnly",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "NoSaltFound",
     "inputs": []
   },

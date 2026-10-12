@@ -368,6 +368,11 @@
   },
   {
     "type": "error",
+    "name": "RecipientsAlreadyConfigured",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "RecipientsNotConfigured",
     "inputs": []
   },

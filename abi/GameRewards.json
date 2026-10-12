@@ -103,6 +103,95 @@
   },
   {
     "type": "function",
+    "name": "allocatedNFTs",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "allocationDocumentHash",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "allocations",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "recipient",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "tokenAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "ethAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "collection",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "prizeTokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "fromTreasury",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "allocationsPublished",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "arbiter",
     "inputs": [],
     "outputs": [
@@ -113,24 +202,6 @@
       }
     ],
     "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "awardPrize",
-    "inputs": [
-      {
-        "name": "nftId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -160,6 +231,107 @@
   },
   {
     "type": "function",
+    "name": "claimDeadline",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "claimReward",
+    "inputs": [
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "claimed",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "collectCreatorFees",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "amount0",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "amount1",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "configureSeason",
+    "inputs": [
+      {
+        "name": "start",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenBudget_",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "ethBudget_",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "nftBudget_",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "rulesHash_",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "daemon",
     "inputs": [],
     "outputs": [
@@ -167,6 +339,58 @@
         "name": "",
         "type": "address",
         "internalType": "contract ERC20"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "ethBudget",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "feeFactory",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract ICreatorFeeFactory"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "feeLaunchNumber",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "feeSourceConfigured",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -199,6 +423,19 @@
   },
   {
     "type": "function",
+    "name": "nftBudget",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "nftOfWallet",
     "inputs": [
       {
@@ -215,6 +452,53 @@
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "nftTreasury",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract NFTTreasury"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "onERC721Received",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes4",
+        "internalType": "bytes4"
+      }
+    ],
+    "stateMutability": "pure"
   },
   {
     "type": "function",
@@ -257,6 +541,56 @@
   },
   {
     "type": "function",
+    "name": "publishAllocations",
+    "inputs": [
+      {
+        "name": "awards",
+        "type": "tuple[]",
+        "internalType": "struct GameRewards.Allocation[]",
+        "components": [
+          {
+            "name": "nftId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "tokenAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "ethAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "collection",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "prizeTokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "fromTreasury",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      },
+      {
+        "name": "documentHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "register",
     "inputs": [
       {
@@ -293,6 +627,32 @@
   },
   {
     "type": "function",
+    "name": "rewardAuthorizer",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "rulesHash",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "seasonStart",
     "inputs": [],
     "outputs": [
@@ -319,6 +679,24 @@
   },
   {
     "type": "function",
+    "name": "setFeeSource",
+    "inputs": [
+      {
+        "name": "factory_",
+        "type": "address",
+        "internalType": "contract ICreatorFeeFactory"
+      },
+      {
+        "name": "launchNumber_",
+        "type": "uint64",
+        "internalType": "uint64"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "setIdentityNft",
     "inputs": [
       {
@@ -332,12 +710,17 @@
   },
   {
     "type": "function",
-    "name": "setPrizesActive",
+    "name": "setRewardAuthority",
     "inputs": [
       {
-        "name": "active",
-        "type": "bool",
-        "internalType": "bool"
+        "name": "authorizer",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "treasury_",
+        "type": "address",
+        "internalType": "contract NFTTreasury"
       }
     ],
     "outputs": [],
@@ -345,16 +728,16 @@
   },
   {
     "type": "function",
-    "name": "setSeasonStart",
-    "inputs": [
+    "name": "tokenBudget",
+    "inputs": [],
+    "outputs": [
       {
-        "name": "start",
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
       }
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -396,24 +779,6 @@
     "stateMutability": "view"
   },
   {
-    "type": "function",
-    "name": "withdrawEth",
-    "inputs": [
-      {
-        "name": "to",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
     "type": "event",
     "name": "AgentRegistered",
     "inputs": [
@@ -428,6 +793,86 @@
         "type": "address",
         "indexed": true,
         "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "AllocationPublished",
+    "inputs": [
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "recipient",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokens",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "eth",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "collection",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "prizeId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "fromTreasury",
+        "type": "bool",
+        "indexed": false,
+        "internalType": "bool"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "AllocationsFinalized",
+    "inputs": [
+      {
+        "name": "documentHash",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "tokens",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "eth",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "nfts",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -466,19 +911,19 @@
   },
   {
     "type": "event",
-    "name": "EthWithdrawn",
+    "name": "FeeSourceSet",
     "inputs": [
       {
-        "name": "to",
+        "name": "factory",
         "type": "address",
         "indexed": true,
         "internalType": "address"
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
+        "name": "launchNumber",
+        "type": "uint64",
+        "indexed": true,
+        "internalType": "uint64"
       }
     ],
     "anonymous": false
@@ -536,44 +981,6 @@
   },
   {
     "type": "event",
-    "name": "PrizePaid",
-    "inputs": [
-      {
-        "name": "nftId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "amount",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "PrizesActiveSet",
-    "inputs": [
-      {
-        "name": "active",
-        "type": "bool",
-        "indexed": false,
-        "internalType": "bool"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
     "name": "ResultRecorded",
     "inputs": [
       {
@@ -605,13 +1012,93 @@
   },
   {
     "type": "event",
-    "name": "SeasonStartSet",
+    "name": "RewardAuthoritySet",
+    "inputs": [
+      {
+        "name": "authorizer",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "treasury",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RewardClaimed",
+    "inputs": [
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "recipient",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokens",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "eth",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SeasonConfigured",
     "inputs": [
       {
         "name": "start",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "tokenBudget",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "ethBudget",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "nftBudget",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "rulesHash",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
       }
     ],
     "anonymous": false
@@ -637,6 +1124,16 @@
   },
   {
     "type": "error",
+    "name": "AlreadyClaimed",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AlreadyPublished",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "AlreadyRegistered",
     "inputs": [
       {
@@ -648,7 +1145,17 @@
   },
   {
     "type": "error",
-    "name": "EthTransferFailed",
+    "name": "BudgetExceeded",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ConfigurationLocked",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "DuplicateAllocation",
     "inputs": []
   },
   {
@@ -661,6 +1168,31 @@
         "internalType": "uint256"
       }
     ]
+  },
+  {
+    "type": "error",
+    "name": "IneligibleWinner",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidAgent",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidAllocation",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidAuthority",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidSeason",
+    "inputs": []
   },
   {
     "type": "error",
@@ -716,6 +1248,21 @@
   },
   {
     "type": "error",
+    "name": "NotRewardAuthorizer",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "OutsideClaimWindow",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "PayerAuthorizationRequired",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "PrizesInactive",
     "inputs": []
   },
@@ -744,6 +1291,11 @@
         "internalType": "uint256"
       }
     ]
+  },
+  {
+    "type": "error",
+    "name": "WrongFeePool",
+    "inputs": []
   },
   {
     "type": "error",

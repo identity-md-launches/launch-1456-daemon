@@ -55,6 +55,14 @@ contract DeployTest is Test {
         assertTrue(d.receiver.configured());
     }
 
+    function test_broadcastEntryRefusesPublicChains() public {
+        Deploy script = new Deploy();
+        Deploy.Config memory cfg;
+        vm.chainId(1);
+        vm.expectRevert(Deploy.LocalRehearsalOnly.selector);
+        script.run(cfg);
+    }
+
     function test_deployRejectsZeroConfig() public {
         Deploy script = new Deploy();
         vm.expectRevert(Deploy.ZeroAddress.selector);

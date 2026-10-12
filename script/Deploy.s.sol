@@ -40,16 +40,18 @@ contract Deploy is Script {
     error ZeroAddress();
     error NoSaltFound();
     error HookDeployFailed();
+    error LocalRehearsalOnly();
 
     /// @notice Broadcast entry point. Reads nothing from the environment except what `vm.startBroadcast` needs;
     /// the configuration is passed explicitly so a test can call `deploy` directly.
     function run(Config memory cfg) external returns (Deployed memory d) {
+        if (block.chainid != 31337) revert LocalRehearsalOnly();
         vm.startBroadcast();
         d = deploy(cfg);
         vm.stopBroadcast();
     }
 
-    /// @notice Deploys every contract and wires the owner-settable addresses that this script itself knows.
+    /// @notice Deploys the local test contracts. All owner configuration remains explicit after deployment.
     /// Recipients only the requester knows (development, founder, arbiter, IdentityMD NFT) are left unset.
     function deploy(Config memory cfg) public returns (Deployed memory d) {
         if (address(cfg.poolManager) == address(0) || cfg.owner == address(0) || cfg.factory == address(0)) {

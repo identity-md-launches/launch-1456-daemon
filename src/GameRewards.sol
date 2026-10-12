@@ -2,27 +2,22 @@
 pragma solidity 0.8.26;
 
 import {ERC20} from "solmate/src/tokens/ERC20.sol";
+import {ReentrancyGuard} from "solmate/src/utils/ReentrancyGuard.sol";
+import {NFTTreasury, IERC721Minimal} from "./NFTTreasury.sol";
+import {ICreatorFeeFactory} from "./ICreatorFeeFactory.sol";
+import {PoolKey} from "v4-core/src/types/PoolKey.sol";
+import {Currency} from "v4-core/src/types/Currency.sol";
 import {SafeTransferLib} from "solmate/src/utils/SafeTransferLib.sol";
 
 interface IERC721Owner {
     function ownerOf(uint256 tokenId) external view returns (address);
 }
 
-/// @title GameRewards
-/// @notice Prize pool for the agent chess arena plus an on-chain "winner stays" ladder record.
-/// @dev Funding: the 4% game-rewards allocation (from DistributionReceiver) and the creator share of pool fees
-/// (whatever the launch factory forwards; ETH is accepted through `receive()`). Nothing here reads or touches
-/// the pool.
-///
-/// Participation: an agent registers with an IdentityMD NFT id from the wallet that owns it. Two agents must
-/// use different NFTs and different wallets. Results are reported by the owner-set `arbiter` (the arena
-/// server's key): the winner keeps the seat, the loser leaves, the next waiting agent is seated. The contract
-/// does not play chess and contains no engine; it only records what the arena reports.
-///
-/// Prizes: `prizesActive` starts false and stays false for the trial. Founder NFT #222 can never receive a
-/// prize. Results reported before `seasonStart` or after `seasonStart + SEASON_LENGTH` are test scores and do
-/// not count toward official wins and streaks.
-contract GameRewards {
+/// @notice TEST ONLY. Protected funding, existing arena ladder, and one four-week reward season.
+/// The owner seals budgets/rules before play; a fixed independent authorizer publishes allocations
+/// after the season. Claims pay the registered wallet, once, before the deadline. No sweeps, recipient
+/// changes, arbitrary calls, purchases, or emergency withdrawals exist. See docs/SECURITY.md.
+contract GameRewards is ReentrancyGuard {
     using SafeTransferLib for ERC20;
 
     uint256 public constant EXCLUDED_NFT = 222;
@@ -38,6 +33,72 @@ contract GameRewards {
     bool public prizesActive;
     /// @notice Start of the official four-week season; zero until the owner sets it at the real launch.
     uint256 public seasonStart;
+
+    address public rewardAuthorizer;
+    NFTTreasury public nftTreasury;
+    uint256 public claimDeadline;
+    uint256 public tokenBudget;
+    uint256 public ethBudget;
+    uint256 public nftBudget;
+    bytes32 public rulesHash;
+    bytes32 public allocationDocumentHash;
+    bool public allocationsPublished;
+    ICreatorFeeFactory public feeFactory;
+    uint64 public feeLaunchNumber;
+    bool public feeSourceConfigured;
+
+    struct Allocation {
+        uint256 nftId;
+        uint256 tokenAmount;
+        uint256 ethAmount;
+        address collection;
+        uint256 prizeTokenId;
+        bool fromTreasury;
+    }
+
+    struct Award {
+        address recipient;
+        uint256 tokenAmount;
+        uint256 ethAmount;
+        address collection;
+        uint256 prizeTokenId;
+        bool fromTreasury;
+    }
+    mapping(uint256 => Award) public allocations;
+    mapping(uint256 => bool) public claimed;
+    mapping(bytes32 => bool) public allocatedNFTs;
+
+    error ConfigurationLocked();
+    error InvalidAuthority();
+    error InvalidSeason();
+    error InvalidAgent();
+    error BudgetExceeded();
+    error NotRewardAuthorizer();
+    error OutsideClaimWindow();
+    error AlreadyPublished();
+    error InvalidAllocation();
+    error IneligibleWinner();
+    error DuplicateAllocation();
+    error AlreadyClaimed();
+    error PayerAuthorizationRequired();
+    error WrongFeePool();
+
+    event RewardAuthoritySet(address indexed authorizer, address indexed treasury);
+    event SeasonConfigured(
+        uint256 start, uint256 deadline, uint256 tokenBudget, uint256 ethBudget, uint256 nftBudget, bytes32 rulesHash
+    );
+    event AllocationPublished(
+        uint256 indexed nftId,
+        address indexed recipient,
+        uint256 tokens,
+        uint256 eth,
+        address collection,
+        uint256 prizeId,
+        bool fromTreasury
+    );
+    event AllocationsFinalized(bytes32 indexed documentHash, uint256 tokens, uint256 eth, uint256 nfts);
+    event RewardClaimed(uint256 indexed nftId, address indexed recipient, uint256 tokens, uint256 eth);
+    event FeeSourceSet(address indexed factory, uint64 indexed launchNumber);
 
     // ---- ladder state
     struct Agent {
@@ -63,14 +124,10 @@ contract GameRewards {
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event IdentityNftSet(address indexed nft);
     event ArbiterSet(address indexed arbiter);
-    event PrizesActiveSet(bool active);
-    event SeasonStartSet(uint256 start);
     event AgentRegistered(uint256 indexed nftId, address indexed wallet);
     event Seated(uint256 indexed championId, uint256 indexed challengerId);
     event ResultRecorded(uint256 indexed winner, uint256 indexed loser, bool draw, bool official);
-    event PrizePaid(uint256 indexed nftId, address indexed to, uint256 amount);
     event EthReceived(address indexed from, uint256 amount);
-    event EthWithdrawn(address indexed to, uint256 amount);
 
     error NotOwner();
     error NotPendingOwner();
@@ -86,7 +143,6 @@ contract GameRewards {
     error ExcludedFromPrizes(uint256 nftId);
     error SeasonAlreadyStarted();
     error SeasonInPast();
-    error EthTransferFailed();
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert NotOwner();
@@ -122,35 +178,81 @@ contract GameRewards {
     }
 
     function setIdentityNft(address nft) external onlyOwner {
+        if (address(identityNft) != address(0)) revert ConfigurationLocked();
+        if (nft.code.length == 0) revert NotConfigured();
         if (nft == address(0)) revert ZeroAddress();
         identityNft = IERC721Owner(nft);
         emit IdentityNftSet(nft);
     }
 
     function setArbiter(address arbiter_) external onlyOwner {
+        if (arbiter != address(0)) revert ConfigurationLocked();
         if (arbiter_ == address(0)) revert ZeroAddress();
         arbiter = arbiter_;
         emit ArbiterSet(arbiter_);
     }
 
-    function setPrizesActive(bool active) external onlyOwner {
-        prizesActive = active;
-        emit PrizesActiveSet(active);
+    /// @notice One-time role/custody setup. Authorizer cannot be the owner or match reporter.
+    function setRewardAuthority(address authorizer, NFTTreasury treasury_) external onlyOwner {
+        if (rewardAuthorizer != address(0)) revert ConfigurationLocked();
+        if (authorizer == address(0) || address(treasury_).code.length == 0) revert NotConfigured();
+        if (authorizer == owner || authorizer == arbiter) revert InvalidAuthority();
+        rewardAuthorizer = authorizer;
+        nftTreasury = treasury_;
+        emit RewardAuthoritySet(authorizer, address(treasury_));
     }
 
-    /// @notice Sets the official season start (the real launch). Can only be set once, and only in the future.
-    function setSeasonStart(uint256 start) external onlyOwner {
+    /// @notice Freeze the single season's rules, budget and deadline before it starts.
+    function configureSeason(
+        uint256 start,
+        uint256 deadline,
+        uint256 tokenBudget_,
+        uint256 ethBudget_,
+        uint256 nftBudget_,
+        bytes32 rulesHash_
+    ) external onlyOwner {
         if (seasonStart != 0) revert SeasonAlreadyStarted();
         if (start <= block.timestamp) revert SeasonInPast();
+        if (address(identityNft) == address(0) || arbiter == address(0) || rewardAuthorizer == address(0)) {
+            revert NotConfigured();
+        }
+        if (rewardAuthorizer == owner || rewardAuthorizer == arbiter) revert InvalidAuthority();
+        if (deadline <= start + SEASON_LENGTH || deadline > start + SEASON_LENGTH + 90 days || rulesHash_ == bytes32(0))
+        {
+            revert InvalidSeason();
+        }
+        if (tokenBudget_ > daemon.balanceOf(address(this)) || ethBudget_ > address(this).balance || nftBudget_ > 128) {
+            revert BudgetExceeded();
+        }
+        if (!nftTreasury.policySealed() || nftTreasury.gameRewards() != address(this)) revert NotConfigured();
         seasonStart = start;
-        emit SeasonStartSet(start);
+        claimDeadline = deadline;
+        tokenBudget = tokenBudget_;
+        ethBudget = ethBudget_;
+        nftBudget = nftBudget_;
+        rulesHash = rulesHash_;
+        prizesActive = true;
+        emit SeasonConfigured(start, deadline, tokenBudget_, ethBudget_, nftBudget_, rulesHash_);
     }
 
-    function withdrawEth(address to, uint256 amount) external onlyOwner {
-        if (to == address(0)) revert ZeroAddress();
-        (bool ok,) = to.call{value: amount}("");
-        if (!ok) revert EthTransferFailed();
-        emit EthWithdrawn(to, amount);
+    /// @notice Optional keeper entry point for the verified factory's native claimFees flow.
+    /// The CURRENT payer must first call factory.setRequester(launchNumber, address(this)).
+    function setFeeSource(ICreatorFeeFactory factory_, uint64 launchNumber_) external onlyOwner {
+        if (feeSourceConfigured) revert ConfigurationLocked();
+        if (address(factory_).code.length == 0) revert NotConfigured();
+        feeFactory = factory_;
+        feeLaunchNumber = launchNumber_;
+        feeSourceConfigured = true;
+        emit FeeSourceSet(address(factory_), launchNumber_);
+    }
+
+    function collectCreatorFees() external nonReentrant returns (uint256 amount0, uint256 amount1) {
+        if (!feeSourceConfigured) revert NotConfigured();
+        (PoolKey memory key,,, address requester) = feeFactory.positionOf(feeLaunchNumber);
+        if (requester != address(this)) revert PayerAuthorizationRequired();
+        if (!((key.currency0.isAddressZero() && Currency.unwrap(key.currency1) == address(daemon))
+                    || (key.currency1.isAddressZero() && Currency.unwrap(key.currency0) == address(daemon)))) revert WrongFeePool();
+        return feeFactory.claimFees(feeLaunchNumber);
     }
 
     // ------------------------------------------------------------------ views
@@ -167,6 +269,7 @@ contract GameRewards {
 
     /// @notice Registers the caller's NFT as an agent and queues it. One NFT per wallet, one wallet per NFT.
     function register(uint256 nftId) external {
+        if (nftId == 0) revert InvalidAgent();
         if (address(identityNft) == address(0)) revert NotConfigured();
         if (identityNft.ownerOf(nftId) != msg.sender) revert NotNftOwner(nftId, msg.sender);
         if (agents[nftId].registered) revert AlreadyRegistered(nftId);
@@ -238,14 +341,76 @@ contract GameRewards {
 
     // ------------------------------------------------------------------ prizes
 
-    /// @notice Pays a DAEMON prize to the current owner of `nftId`. Owner only; disabled until `prizesActive`.
-    function awardPrize(uint256 nftId, uint256 amount) external onlyOwner {
+    /// @notice A published allocation is immutable, identifies the registered winner and is capped by
+    /// the sealed season budget. A content hash links the public result/rules document to these events.
+    function publishAllocations(Allocation[] calldata awards, bytes32 documentHash) external {
+        if (msg.sender != rewardAuthorizer) revert NotRewardAuthorizer();
         if (!prizesActive) revert PrizesInactive();
-        if (nftId == EXCLUDED_NFT) revert ExcludedFromPrizes(nftId);
-        if (address(identityNft) == address(0)) revert NotConfigured();
-        address to = identityNft.ownerOf(nftId);
-        totalPrizesPaid += amount;
-        daemon.safeTransfer(to, amount);
-        emit PrizePaid(nftId, to, amount);
+        if (block.timestamp < seasonStart + SEASON_LENGTH || block.timestamp > claimDeadline) {
+            revert OutsideClaimWindow();
+        }
+        if (allocationsPublished) revert AlreadyPublished();
+        if (documentHash == bytes32(0) || awards.length == 0 || awards.length > 128) revert InvalidAllocation();
+        allocationsPublished = true;
+        allocationDocumentHash = documentHash;
+        uint256 tokens;
+        uint256 eth;
+        uint256 nfts;
+        for (uint256 i; i < awards.length; ++i) {
+            Allocation calldata a = awards[i];
+            if (a.nftId == EXCLUDED_NFT) revert ExcludedFromPrizes(a.nftId);
+            Agent storage agent = agents[a.nftId];
+            if (!agent.registered || agent.officialWins == 0) revert IneligibleWinner();
+            if (allocations[a.nftId].recipient != address(0)) revert DuplicateAllocation();
+            if (a.tokenAmount == 0 && a.ethAmount == 0 && a.collection == address(0)) revert InvalidAllocation();
+            if (a.collection != address(0)) {
+                if (a.prizeTokenId == EXCLUDED_NFT) revert ExcludedFromPrizes(a.prizeTokenId);
+                bytes32 nftKey = keccak256(abi.encode(a.collection, a.prizeTokenId));
+                if (allocatedNFTs[nftKey]) revert DuplicateAllocation();
+                allocatedNFTs[nftKey] = true;
+                address custodian = a.fromTreasury ? address(nftTreasury) : address(this);
+                if (IERC721Minimal(a.collection).ownerOf(a.prizeTokenId) != custodian) revert InvalidAllocation();
+                ++nfts;
+            } else if (a.prizeTokenId != 0 || a.fromTreasury) {
+                revert InvalidAllocation();
+            }
+            tokens += a.tokenAmount;
+            eth += a.ethAmount;
+            allocations[a.nftId] =
+                Award(agent.wallet, a.tokenAmount, a.ethAmount, a.collection, a.prizeTokenId, a.fromTreasury);
+            emit AllocationPublished(
+                a.nftId, agent.wallet, a.tokenAmount, a.ethAmount, a.collection, a.prizeTokenId, a.fromTreasury
+            );
+        }
+        if (tokens > tokenBudget || eth > ethBudget || nfts > nftBudget) revert BudgetExceeded();
+        emit AllocationsFinalized(documentHash, tokens, eth, nfts);
+    }
+
+    /// @notice Anyone can relay a claim, but its recipient and amounts cannot be supplied or changed.
+    function claimReward(uint256 nftId) external nonReentrant {
+        if (!allocationsPublished) revert PrizesInactive();
+        if (block.timestamp < seasonStart + SEASON_LENGTH || block.timestamp > claimDeadline) {
+            revert OutsideClaimWindow();
+        }
+        if (claimed[nftId]) revert AlreadyClaimed();
+        Award memory a = allocations[nftId];
+        if (a.recipient == address(0)) revert InvalidAllocation();
+        claimed[nftId] = true;
+        totalPrizesPaid += a.tokenAmount;
+        if (a.tokenAmount > 0) daemon.safeTransfer(a.recipient, a.tokenAmount);
+        if (a.ethAmount > 0) SafeTransferLib.safeTransferETH(a.recipient, a.ethAmount);
+        if (a.collection != address(0)) {
+            if (a.fromTreasury) {
+                nftTreasury.deliverPrize(a.collection, a.prizeTokenId, a.recipient);
+            } else {
+                IERC721Minimal(a.collection).safeTransferFrom(address(this), a.recipient, a.prizeTokenId);
+                if (IERC721Minimal(a.collection).ownerOf(a.prizeTokenId) != a.recipient) revert InvalidAllocation();
+            }
+        }
+        emit RewardClaimed(nftId, a.recipient, a.tokenAmount, a.ethAmount);
+    }
+
+    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 }

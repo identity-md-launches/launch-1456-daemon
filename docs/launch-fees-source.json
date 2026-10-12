@@ -1,0 +1,45 @@
+{
+  "address": "0x12c9E1007262AfAC205567457F5826a9416a3863",
+  "chainId": "1",
+  "creationMatch": "match",
+  "runtimeMatch": "match",
+  "verifiedAt": "2026-10-12T08:49:26Z",
+  "deployment": {
+    "transactionHash": "0xc7d5fff41fd980a45c0dfee497c22bfac31b6af223b895073f36159a59dda9b1",
+    "blockNumber": "26128673",
+    "transactionIndex": "241",
+    "deployer": "0x047F606fD5b2BaA5f5C6c4aB8958E45CB6B054B7"
+  },
+  "compilation": {
+    "language": "Solidity",
+    "compiler": "solc",
+    "compilerVersion": "0.8.26+commit.8a97fa7a",
+    "compilerSettings": {
+      "viaIR": false,
+      "metadata": {
+        "appendCBOR": true,
+        "bytecodeHash": "none",
+        "useLiteralContent": false
+      },
+      "optimizer": {
+        "runs": 200,
+        "enabled": true
+      },
+      "evmVersion": "cancun",
+      "remappings": [
+        "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+        "forge-std/=lib/forge-std/src/",
+        "solmate/=lib/solmate/",
+        "v4-core/=lib/v4-core/",
+        "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+        "@openzeppelin/=lib/v4-core/lib/openzeppelin-contracts/",
+        "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+        "hardhat/=lib/v4-core/node_modules/hardhat/",
+        "openzeppelin-contracts/=lib/openzeppelin-contracts/"
+      ]
+    },
+    "name": "LaunchFees",
+    "fullyQualifiedName": "src/LaunchFees.sol:LaunchFees"
+  },
+  "source": "https://sourcify.dev/server/v2/contract/1/0x12c9E1007262AfAC205567457F5826a9416a3863?fields=all"
+}

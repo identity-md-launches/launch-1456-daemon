@@ -1,0 +1,37 @@
+[
+  {
+    "contract": "DaemonToken",
+    "creationBytes": 3542,
+    "runtimeBytes": 2610,
+    "compiler": "0.8.26+commit.8a97fa7a",
+    "unlinkedLibraries": false
+  },
+  {
+    "contract": "DaemonHook",
+    "creationBytes": 8133,
+    "runtimeBytes": 7034,
+    "compiler": "0.8.26+commit.8a97fa7a",
+    "unlinkedLibraries": false
+  },
+  {
+    "contract": "NFTTreasury",
+    "creationBytes": 6790,
+    "runtimeBytes": 6493,
+    "compiler": "0.8.26+commit.8a97fa7a",
+    "unlinkedLibraries": false
+  },
+  {
+    "contract": "GameRewards",
+    "creationBytes": 11133,
+    "runtimeBytes": 10808,
+    "compiler": "0.8.26+commit.8a97fa7a",
+    "unlinkedLibraries": false
+  },
+  {
+    "contract": "DistributionReceiver",
+    "creationBytes": 2650,
+    "runtimeBytes": 2332,
+    "compiler": "0.8.26+commit.8a97fa7a",
+    "unlinkedLibraries": false
+  }
+]
